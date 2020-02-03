@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block body %}
+
+<form method="POST" action = "/chat" id="newform">
+    <input type="text" id = "name" name = "name" hidden />
+    <input type="text" id = "id" name="id" hidden/>
+</form>
+
+<button id = "new" class="btn btn-primary"> New Chat </button>
+<button id = "join" class="btn btn-primary">Join Chat</button> 
+
+<script>
+
+function randomStr(len, arr) { 
+            var ans = ''; 
+            for (var i = len; i > 0; i--) { 
+                ans +=  
+                  arr[Math.floor(Math.random() * arr.length)]; 
+            } 
+            return ans; 
+        } 
+
+var arr = ['1', '2', '3', '4', '5', '6'];
+
+$('#new').on('click', function(){
+    var name = window.prompt("Enter your chat name");
+    if (name != null){
+        var id = randomStr(5, arr);
+        $('#id').val(id);
+        $('#name').val(name);
+        $('#newform').submit();
+    }
+});
+
+$('#join').on('click', function(){
+    var name = window.prompt("Enter your chat name");
+    if (name != null){
+        var id = window.prompt("Please enter the chat ID");
+        if (id!= null){
+            $('#id').val(id);
+            $('#newform').submit(); $('#newform').submit();
+        }
+    }
+});
+
+</script>
+
+{% endblock %}

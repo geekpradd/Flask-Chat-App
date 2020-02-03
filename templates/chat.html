@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+<p>
+{% block body %}
+Hello 
+{% if name %}
+    {{ name }}
+{% else %}
+    user
+{% endif %}
+<br><div id="chat_id_status">Your chat ID is {{chatid}} </div> 
+<p><div id="status">Waiting for other user to connect</div> </p>
+<div id="chatarea">
+</div>
+
+<form method="POST" action="" id="chat">
+    <input type="text" class="username" placeholder="Text" id="msg" />
+    <input type = "submit" id="submt" class="btn btn-primary"/>
+    
+</form>
+
+<script>
+    var chat_id = {{chatid}};
+    var nam = "{{name}}";
+    var socket  = io.connect('http://' + document.domain + ':' + location.port);
+    socket.on('connect', function(){
+        $('#msg').prop('disabled', true);
+        $('#submt').prop('disabled', true);
+        socket.emit('connection_established', {
+            id: chat_id
+        });
+        $('#chat').on('submit', function(e){
+            e.preventDefault();
+            var text = $('input.username').val();
+            console.log("Text is " + text.toString());
+            socket.emit('chatsend', {
+                message: text,
+                name: nam,
+                id: chat_id
+            });
+        });
+    });
+    socket.on('other_est', function(){
+        $('#status').html("User has connected. Press Submit to send message");
+        $('#msg').prop('disabled', false);
+        $('#submt').prop('disabled', false);
+    });
+    socket.on('chatrecieve', function(json){
+        var msg = json.message;
+        var cur_id = json.id;
+        if (cur_id === chat_id)
+            $('#chatarea').append("<br> <b>"  + json.name.toString() + "</b> : " + msg.toString());
+    });
+</script>
+{% endblock body %}
